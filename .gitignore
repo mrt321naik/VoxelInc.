@@ -1,0 +1,5 @@
+build/*
+.cache/*
+r3make.json
+external/bin
+compile_commands.json
