@@ -13,21 +13,31 @@ VXResult VXNewScene(VXVec3 dimensions, VXScene* scene) {
     return VX_OK;
 }
 
+u32 VXGetChunkIndex(VXVec3 pos, VXScene* scene) {
+    return pos.x + scene->dimensions.x * pos.y + scene->dimensions.x * scene->dimensions.y * pos.z;
+}
+
 VXChunk* VXGetChunk(VXVec3 pos, VXScene* scene) {
-    u32 i = pos.x * scene->dimensions.x + (pos.y + scene->dimensions.y * pos.z);
+    if (pos.x >= scene->dimensions.x
+    ||  pos.y >= scene->dimensions.y
+    ||  pos.z >= scene->dimensions.z) {
+        return NULL;
+    }
+
+    u32 i = VXGetChunkIndex(pos, scene);
     if (i >= scene->nchunks) return NULL;
     return &scene->chunks[i];
 }
 
 VXResult VXSetChunk(VXVec3 pos, VXChunk* chunk, VXScene* scene) {
-    u32 i = pos.x * scene->dimensions.x + (pos.y + scene->dimensions.y * pos.z);
+    u32 i = VXGetChunkIndex(pos, scene);
     if (i >= scene->nchunks) return VX_ERROR;
     scene->chunks[i] = *chunk;
     return VX_OK;
 }
 
 VXResult VXResetChunk(VXVec3 pos, VXScene* scene) {
-    u32 i = pos.x * scene->nchunks + (pos.y + pos.z * scene->nchunks);
+    u32 i = VXGetChunkIndex(pos, scene);
     if (i >= scene->nchunks) return VX_ERROR;
     return VXSetMem(sizeof(scene->chunks[i].data), 0, scene->chunks[i].data);
 }
@@ -35,7 +45,12 @@ VXResult VXResetChunk(VXVec3 pos, VXScene* scene) {
 VXResult VXDelScene(VXScene* scene) {
     if (!scene) return VX_ERROR;
 
-    if (scene->chunks) VXFree(scene->chunks);
+    if (scene->chunks) {
+        FOR(u32, i, 0, scene->nchunks, 1) {
+            VXFree(scene->chunks[i].mesh.verts);
+        } VXFree(scene->chunks);
+    }
+
     scene->chunks = NULL;
     scene->nchunks = 0;
 

@@ -17,6 +17,7 @@
 
 typedef struct VXChunk {
     u8 data[VX_CHUNK_VOLUME];   // chunk data stored in a linear buffer (i = x * w + (y + h * z))
+    VXMesh mesh;
     u8 mask;                    // bitmask for chunk state
 } VXChunk;
 
@@ -25,10 +26,3 @@ typedef struct VXScene {
     VXVec3 dimensions;  // dimensions of the scene in chunks
     u32 nchunks;
 } VXScene;
-
-VXResult VXNewScene(VXVec3 dimensions, VXScene* scene);
-VXResult VXDelScene(VXScene* scene);
-
-VXResult VXSetChunk(VXVec3 pos, VXChunk* chunk, VXScene* scene);
-VXResult VXResetChunk(VXVec3 pos, VXScene* scene);
-VXChunk* VXGetChunk(VXVec3 pos, VXScene* scene);

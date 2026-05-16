@@ -1,6 +1,7 @@
 #include <include/VX/VX.h>
 #include <stdlib.h>
 
+
 VXResult VXNewArena(u64 size, VXArena* arena) {
     if (!size || !arena) return VX_ERROR;
 

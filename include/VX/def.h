@@ -21,8 +21,36 @@ typedef enum VXResult {
     VX_OK
 } VXResult;
 
+#ifdef KB
+    #undef KB
+#endif
+#ifdef MB
+    #undef MB
+#endif
+#ifdef GB
+    #undef GB
+#endif
+#define KB 1000
+#define MB (KB * 1000)
+#define GB (MB * 1000)
+
+#ifdef KiB
+    #undef KiB
+#endif
+#ifdef MiB
+    #undef MiB
+#endif
+#ifdef GiB
+    #undef GiB
+#endif
+#define KiB 1024
+#define MiB (KiB * 1024)
+#define GiB (MiB * 1024)
+
 #define VX_ALIGNMENT 8
 #define VX_CHUNK_VOLUME 32*32*32
+
+#define CLAMP(v, min, max) ((v) < (min) ? (min) : ((v) > (max) ? (max) : (v)))
 
 #define FLIP_BIT(v, b)  ((v) ^ (1<<(b)))
 #define SET_BITS(v, b)  ((v) | (1<<(b)))
